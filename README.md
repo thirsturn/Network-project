@@ -132,20 +132,28 @@ Each member implements the client side of their own concept. `ConsoleClient` com
 
 ## Setup
 
-### 1. Generate the TLS keystore
+### 1. TLS Keystore
 
-One member generates `keystore.jks` and commits it to the repo. Everyone must use the same file, because clients have to trust the server's certificate.
+`keystore.jks` is already generated and included in the repository with the default password `changeit`. All team members must use this identical keystore so that TLS client-server handshakes succeed without trust issues.
 
+If you ever need to regenerate it:
 ```bash
 keytool -genkeypair -alias campus -keyalg RSA -keysize 2048 -validity 365 \
-  -keystore keystore.jks -storepass changeit -dname "CN=localhost"
+  -keystore keystore.jks -storepass changeit -keypass changeit -dname "CN=localhost"
 ```
 
 ### 2. Compile
 
+**Linux / macOS (Bash):**
 ```bash
 mkdir -p out
 javac -d out $(find src/main/java -name "*.java")
+```
+
+**Windows (PowerShell):**
+```powershell
+if (!(Test-Path out)) { New-Item -ItemType Directory -Path out }
+javac -d out (Get-ChildItem -Recurse -Filter *.java src/main/java | Select-Object -ExpandProperty FullName)
 ```
 
 ## Running
