@@ -1,7 +1,10 @@
 import common.Config;
 import common.MessageStore;
 import common.SessionStore;
+import http.HistoryServer;
 import tcp.ChatServer;
+
+import java.io.IOException;
 
 /**
  * Server entry point for Campus Collaboration Hub.
@@ -18,6 +21,7 @@ import tcp.ChatServer;
 public class Main {
 
     private static ChatServer chatServer;
+    private static HistoryServer historyServer;
 
     public static void main(String[] args) {
         System.out.println("==================================================");
@@ -46,10 +50,19 @@ public class Main {
         System.out.println("[Main] TCP Chat Server thread launched on port " + Config.CHAT_TCP_PORT);
 
         // -----------------------------------------------------------------
+        // Component 4: HTTP REST API Server (Member 3 - Pasindu)
+        // -----------------------------------------------------------------
+        try {
+            historyServer = new HistoryServer();
+            historyServer.start();
+        } catch (IOException e) {
+            System.err.println("[Main] Failed to start HTTP History Server: " + e.getMessage());
+        }
+
+        // -----------------------------------------------------------------
         // Integration Placeholders for other members:
         // Member 4 (TLS): tls.AuthServer.start();
         // Member 2 (UDP): udp.StatusNotifier.initialize();
-        // Member 3 (HTTP): http.HistoryServer.start();
         // Member 5 (Multicast): Announcement integration
         // -----------------------------------------------------------------
 
@@ -58,6 +71,9 @@ public class Main {
             System.out.println("\n[Main] Shutdown signal received. Stopping servers...");
             if (chatServer != null) {
                 chatServer.stop();
+            }
+            if (historyServer != null) {
+                historyServer.stop();
             }
             System.out.println("[Main] All servers stopped cleanly.");
         }));
@@ -76,5 +92,9 @@ public class Main {
 
     public static ChatServer getChatServer() {
         return chatServer;
+    }
+
+    public static HistoryServer getHistoryServer() {
+        return historyServer;
     }
 }

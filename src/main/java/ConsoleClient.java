@@ -1,6 +1,7 @@
 import common.Config;
 import common.Message;
 import common.MessageStore;
+import http.HistoryClient;
 import tcp.ChatClient;
 
 import java.util.List;
@@ -142,19 +143,10 @@ public class ConsoleClient {
 
     /**
      * Handles /history
-     * Retrieves chat history (via HTTP REST API or shared store).
+     * Retrieves chat history via HTTP REST API (Member 3).
      */
     private void handleHistoryCommand() {
-        System.out.println("\n--- [Message History] ---");
-        List<Message> messages = MessageStore.getInstance().getMessages();
-        if (messages.isEmpty()) {
-            System.out.println("(No messages recorded yet)");
-        } else {
-            for (Message msg : messages) {
-                System.out.println(msg.toString());
-            }
-        }
-        System.out.println("-------------------------\n");
+        new HistoryClient().printHistory();
     }
 
     private void handleQuitCommand() {

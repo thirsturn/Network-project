@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Campus Collaboration Hub – Technical Integration Specification</title>
+<style>
+  @page {
+    size: A4;
+    margin: 18mm 16mm 18mm 16mm;
+    @bottom-right {
+      content: counter(page);
+    }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #24292f;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+  }
+
+  .cover-header {
+    border-bottom: 3px solid #0969da;
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 20px;
+    background-color: #ddf4ff;
+    color: #0969da;
+    margin-right: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .badge-purple {
+    background-color: #fbefff;
+    color: #8250df;
+  }
+
+  h1 {
+    font-size: 24px;
+    color: #1f2328;
+    margin: 12px 0 6px 0;
+    font-weight: 700;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: #57606a;
+    margin: 0 0 16px 0;
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    background-color: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 12px;
+  }
+
+  .meta-item strong {
+    display: block;
+    color: #57606a;
+    font-size: 10.5px;
+    text-transform: uppercase;
+  }
+
+  .meta-item span {
+    color: #24292f;
+    font-weight: 600;
+  }
+
+  h2 {
+    font-size: 17px;
+    color: #0969da;
+    border-bottom: 1px solid #d0d7de;
+    padding-bottom: 6px;
+    margin-top: 24px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  h3 {
+    font-size: 14px;
+    color: #24292f;
+    margin-top: 16px;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0 0 10px 0;
+  }
+
+  .callout {
+    background-color: #f0f7ff;
+    border-left: 4px solid #0969da;
+    padding: 10px 14px;
+    margin: 14px 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 12.5px;
+  }
+
+  .callout-title {
+    font-weight: 700;
+    color: #0969da;
+    margin-bottom: 4px;
+  }
+
+  .callout-success {
+    background-color: #dafbe1;
+    border-left-color: #1a7f37;
+  }
+  .callout-success .callout-title {
+    color: #1a7f37;
+  }
+
+  pre {
+    background-color: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 11.5px;
+    line-height: 1.45;
+    overflow-x: auto;
+    margin: 10px 0 14px 0;
+    page-break-inside: avoid;
+  }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    background-color: #eff1f3;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 11.5px;
+  }
+
+  pre code {
+    background: none;
+    padding: 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 12px;
+    page-break-inside: avoid;
+  }
+
+  th, td {
+    border: 1px solid #d0d7de;
+    padding: 8px 12px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f6f8fa;
+    font-weight: 600;
+    color: #24292f;
+  }
+
+  tr:nth-child(even) {
+    background-color: #fcfcfc;
+  }
+
+  .diagram-container {
+    background-color: #ffffff;
+    border: 1px solid #d0d7de;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px 0;
+    text-align: center;
+    page-break-inside: avoid;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
+
+  .keyword { color: #cf222e; font-weight: 600; }
+  .type { color: #953800; font-weight: 600; }
+  .string { color: #0a3069; }
+  .comment { color: #6e7781; font-style: italic; }
+</style>
+</head>
+<body>
+
+<div class="cover-header">
+  <div>
+    <span class="badge">Network Programming</span>
+    <span class="badge">Assignment 02</span>
+    <span class="badge badge-purple">Cross-Protocol Integration</span>
+  </div>
+  <h1>Campus Collaboration Hub</h1>
+  <div class="subtitle">Technical Specification & Architecture Report: HTTP History Server, History Client, & Shared MessageStore</div>
+  
+  <div class="meta-grid">
+    <div class="meta-item">
+      <strong>Protocol Scope</strong>
+      <span>TCP (5000) & HTTP (8080)</span>
+    </div>
+    <div class="meta-item">
+      <strong>Focus Components</strong>
+      <span>HistoryServer, HistoryClient, MessageStore</span>
+    </div>
+    <div class="meta-item">
+      <strong>Assigned Roles</strong>
+      <span>Member 1 & Member 3</span>
+    </div>
+    <div class="meta-item">
+      <strong>Platform</strong>
+      <span>Java 11+ / Multi-Threaded Sockets</span>
+    </div>
+  </div>
+</div>
+
+<h2>1. Executive Summary & Objective</h2>
+<p>
+  The <strong>Campus Collaboration Hub</strong> demonstrates five fundamental networking protocols operating within a single distributed architecture. A critical technical challenge is establishing seamless cross-protocol communication between stateful stream sockets (<strong>TCP Chat</strong>) and stateless request-response architectures (<strong>HTTP REST API</strong>).
+</p>
+<p>
+  This document details the architectural design and code-level integration of three foundational requirements:
+</p>
+<ul>
+  <li><strong>HistoryServer into <code>Main.java</code>:</strong> Background lifecycle management of the lightweight HTTP daemon on port <code>8080</code>.</li>
+  <li><strong>HistoryClient into the <code>/history</code> console command:</strong> Client-side execution of authenticated HTTP GET queries rather than direct RAM reads.</li>
+  <li><strong>TCP chat messages into the shared <code>MessageStore</code>:</strong> Thread-safe in-memory message buffering acting as the cross-protocol producer-consumer bridge.</li>
+</ul>
+
+<div class="callout callout-success">
+  <div class="callout-title">Core Integration Principle</div>
+  Clients communicate exclusively via genuine network sockets (TCP port 5000 for chat, HTTP port 8080 for history). Server-side components communicate internally via the high-concurrency <code>MessageStore</code> singleton.
+</div>
+
+<h2>2. Cross-Protocol Architecture & Data Flow</h2>
+<p>
+  The diagram below illustrates the exact sequence when a user transmits a live chat message over TCP and a peer subsequent retrieves chat history over HTTP.
+</p>
+
+<div class="diagram-container">
+  <svg viewBox="0 0 740 380" width="100%" height="340" xmlns="http://www.w3.org/2000/svg">
+    <!-- Actor 1: Alice -->
+    <rect x="20" y="20" width="120" height="40" rx="6" fill="#ddf4ff" stroke="#0969da" stroke-width="2"/>
+    <text x="80" y="44" font-family="sans-serif" font-size="12" font-weight="bold" fill="#0969da" text-anchor="middle">Alice (Client)</text>
+    <line x1="80" y1="60" x2="80" y2="360" stroke="#0969da" stroke-width="1.5" stroke-dasharray="4"/>
+
+    <!-- Server Component: ChatServer & ClientHandler -->
+    <rect x="180" y="20" width="150" height="40" rx="6" fill="#f6f8fa" stroke="#24292f" stroke-width="2"/>
+    <text x="255" y="44" font-family="sans-serif" font-size="12" font-weight="bold" fill="#24292f" text-anchor="middle">TCP ClientHandler (5000)</text>
+    <line x1="255" y1="60" x2="255" y2="360" stroke="#6e7781" stroke-width="1.5" stroke-dasharray="4"/>
+
+    <!-- Shared Store -->
+    <rect x="360" y="20" width="140" height="40" rx="6" fill="#dafbe1" stroke="#1a7f37" stroke-width="2"/>
+    <text x="430" y="44" font-family="sans-serif" font-size="12" font-weight="bold" fill="#1a7f37" text-anchor="middle">MessageStore (Shared)</text>
+    <line x1="430" y1="60" x2="430" y2="360" stroke="#1a7f37" stroke-width="1.5" stroke-dasharray="4"/>
+
+    <!-- Server Component: HistoryServer -->
+    <rect x="525" y="20" width="135" height="40" rx="6" fill="#f6f8fa" stroke="#24292f" stroke-width="2"/>
+    <text x="592" y="44" font-family="sans-serif" font-size="12" font-weight="bold" fill="#24292f" text-anchor="middle">HistoryServer (8080)</text>
+    <line x1="592" y1="60" x2="592" y2="360" stroke="#6e7781" stroke-width="1.5" stroke-dasharray="4"/>
+
+    <!-- Actor 2: Bob -->
+    <rect x="670" y="20" width="60" height="40" rx="6" fill="#fbefff" stroke="#8250df" stroke-width="2"/>
+    <text x="700" y="44" font-family="sans-serif" font-size="12" font-weight="bold" fill="#8250df" text-anchor="middle">Bob</text>
+    <line x1="700" y1="60" x2="700" y2="360" stroke="#8250df" stroke-width="1.5" stroke-dasharray="4"/>
+
+    <!-- Step 1: Alice sends TCP -->
+    <line x1="80" y1="90" x2="255" y2="90" stroke="#0969da" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="167" y="82" font-family="sans-serif" font-size="10.5" fill="#0969da" text-anchor="middle">1. TCP: MSG|Hello world!</text>
+
+    <!-- Step 2: Store addMessage -->
+    <line x1="255" y1="125" x2="430" y2="125" stroke="#1a7f37" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="342" y="117" font-family="sans-serif" font-size="10.5" fill="#1a7f37" text-anchor="middle">2. addMessage(new Message(...))</text>
+
+    <!-- Step 3: Broadcast -->
+    <line x1="255" y1="165" x2="80" y2="165" stroke="#57606a" stroke-width="1.5" stroke-dasharray="2"/>
+    <text x="167" y="157" font-family="sans-serif" font-size="10" fill="#57606a" text-anchor="middle">3. Broadcast to peers</text>
+
+    <!-- Step 4: Bob sends /history -->
+    <line x1="700" y1="210" x2="592" y2="210" stroke="#8250df" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="646" y="202" font-family="sans-serif" font-size="10.5" fill="#8250df" text-anchor="middle">4. HTTP GET /messages</text>
+
+    <!-- Step 5: HistoryServer reads MessageStore -->
+    <line x1="592" y1="250" x2="430" y2="250" stroke="#1a7f37" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="511" y="242" font-family="sans-serif" font-size="10.5" fill="#1a7f37" text-anchor="middle">5. toJsonArray()</text>
+
+    <!-- Step 6: Data returned -->
+    <line x1="430" y1="285" x2="592" y2="285" stroke="#1a7f37" stroke-width="1.5" stroke-dasharray="3"/>
+    <text x="511" y="278" font-family="sans-serif" font-size="10" fill="#1a7f37" text-anchor="middle">6. JSON String array</text>
+
+    <!-- Step 7: HTTP 200 Response -->
+    <line x1="592" y1="325" x2="700" y2="325" stroke="#0969da" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="646" y="317" font-family="sans-serif" font-size="10.5" fill="#0969da" text-anchor="middle">7. 200 OK [JSON]</text>
+
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 1 L 8 5 L 0 9 z" fill="#24292f" />
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+<div class="page-break"></div>
+
+<h2>3. Component 1: HistoryServer into Main.java</h2>
+
+<h3>3.1. Responsibility</h3>
+<p>
+  <code>Main.java</code> functions as the server orchestrator. It instantiates the shared data repositories and launches each protocol server in its own non-blocking lifecycle thread. For the HTTP module:
+</p>
+<ul>
+  <li>It binds the <code>com.sun.net.httpserver.HttpServer</code> instance to <code>Config.REST_HTTP_PORT</code> (8080).</li>
+  <li>It registers REST contexts such as <code>/messages</code>.</li>
+  <li>It assigns an independent <code>ExecutorService</code> thread pool to prevent HTTP request saturation from impacting the TCP event loop.</li>
+  <li>It binds lifecycle termination to the JVM Shutdown Hook.</li>
+</ul>
+
+<h3>3.2. Integration Code in Main.java</h3>
+<pre><code><span class="keyword">package</span> main;
+
+<span class="keyword">import</span> common.Config;
+<span class="keyword">import</span> common.MessageStore;
+<span class="keyword">import</span> http.HistoryServer;
+<span class="keyword">import</span> tcp.ChatServer;
+
+<span class="keyword">public class</span> <span class="type">Main</span> {
+    <span class="keyword">private static</span> <span class="type">ChatServer</span> chatServer;
+    <span class="keyword">private static</span> <span class="type">HistoryServer</span> historyServer;
+
+    <span class="keyword">public static void</span> <span class="type">main</span>(String[] args) {
+        <span class="comment">// 1. Initialize Shared In-Memory Storage</span>
+        <span class="type">MessageStore</span> messageStore = <span class="type">MessageStore</span>.getInstance();
+
+        <span class="comment">// 2. Start TCP Chat Server (Member 1 - Port 5000)</span>
+        chatServer = <span class="keyword">new</span> <span class="type">ChatServer</span>(Config.CHAT_TCP_PORT);
+        <span class="type">Thread</span> chatThread = <span class="keyword">new</span> <span class="type">Thread</span>(chatServer, <span class="string">"TCP-ChatServer-Thread"</span>);
+        chatThread.start();
+
+        <span class="comment">// 3. Start HTTP History Server (Member 3 - Port 8080)</span>
+        historyServer = <span class="keyword">new</span> <span class="type">HistoryServer</span>(Config.REST_HTTP_PORT);
+        historyServer.start();
+        System.out.println(<span class="string">"[Main] HTTP History REST Server started on port "</span> + Config.REST_HTTP_PORT);
+
+        <span class="comment">// 4. Graceful Shutdown Management</span>
+        Runtime.getRuntime().addShutdownHook(<span class="keyword">new</span> <span class="type">Thread</span>(() -&gt; {
+            System.out.println(<span class="string">"\n[Main] Shutdown signal detected. Stopping daemons..."</span>);
+            <span class="keyword">if</span> (chatServer != <span class="keyword">null</span>) chatServer.stop();
+            <span class="keyword">if</span> (historyServer != <span class="keyword">null</span>) historyServer.stop();
+            System.out.println(<span class="string">"[Main] All servers terminated cleanly."</span>);
+        }));
+    }
+}</code></pre>
+
+<h2>4. Component 2: HistoryClient into the /history Command</h2>
+
+<h3>4.1. Responsibility</h3>
+<p>
+  When a user enters <code>/history</code> in the <code>ConsoleClient</code>, reading the local <code>MessageStore</code> directly only works in monolithic single-JVM testing. In actual network deployment, the client process runs on a separate machine. Thus, <code>ConsoleClient</code> must execute a genuine HTTP GET request via <code>HistoryClient</code>.
+</p>
+
+<h3>4.2. Implementation Blueprint (http/HistoryClient.java)</h3>
+<pre><code><span class="keyword">package</span> http;
+
+<span class="keyword">import</span> common.Message;
+<span class="keyword">import</span> java.io.IOException;
+<span class="keyword">import</span> java.net.URI;
+<span class="keyword">import</span> java.net.http.HttpClient;
+<span class="keyword">import</span> java.net.http.HttpRequest;
+<span class="keyword">import</span> java.net.http.HttpResponse;
+<span class="keyword">import</span> java.time.Duration;
+<span class="keyword">import</span> java.util.List;
+
+<span class="keyword">public class</span> <span class="type">HistoryClient</span> {
+    <span class="keyword">private final</span> <span class="type">String</span> endpoint;
+    <span class="keyword">private final</span> <span class="type">HttpClient</span> client;
+
+    <span class="keyword">public</span> <span class="type">HistoryClient</span>(String host, <span class="keyword">int</span> port) {
+        <span class="keyword">this</span>.endpoint = <span class="string">"http://"</span> + host + <span class="string">":"</span> + port + <span class="string">"/messages"</span>;
+        <span class="keyword">this</span>.client = <span class="type">HttpClient</span>.newBuilder()
+                .connectTimeout(Duration.ofSeconds(4))
+                .build();
+    }
+
+    <span class="keyword">public</span> <span class="type">List</span>&lt;<span class="type">Message</span>&gt; fetchHistory() <span class="keyword">throws</span> IOException, InterruptedException {
+        <span class="type">HttpRequest</span> request = <span class="type">HttpRequest</span>.newBuilder()
+                .uri(URI.create(endpoint))
+                .header(<span class="string">"Accept"</span>, <span class="string">"application/json"</span>)
+                .GET()
+                .build();
+
+        <span class="type">HttpResponse</span>&lt;String&gt; response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        <span class="keyword">if</span> (response.statusCode() == 200) {
+            <span class="keyword">return</span> parseMessages(response.body());
+        }
+        <span class="keyword">throw new</span> <span class="type">IOException</span>(<span class="string">"HTTP error response: "</span> + response.statusCode());
+    }
+}</code></pre>
+
+<div class="page-break"></div>
+
+<h2>5. Component 3: TCP Chat Messages into Shared MessageStore</h2>
+
+<h3>5.1. The Producer-Consumer Bridge Pattern</h3>
+<p>
+  TCP chat operates via persistent socket channels where messages arrive as line-delimited streams (<code>MSG|&lt;text&gt;</code>). In contrast, HTTP REST requests are stateless transactions.
+  The <strong>Producer-Consumer Bridge</strong> pattern decouples these two communication models:
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Role</th>
+      <th>Component</th>
+      <th>Protocol</th>
+      <th>Action on MessageStore</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Producer</strong></td>
+      <td><code>tcp.ClientHandler</code></td>
+      <td>TCP (Port 5000)</td>
+      <td>Appends incoming messages: <code>addMessage(msg)</code></td>
+    </tr>
+    <tr>
+      <td><strong>Consumer</strong></td>
+      <td><code>http.HistoryServer</code></td>
+      <td>HTTP (Port 8080)</td>
+      <td>Reads stored messages: <code>getMessages()</code> / <code>toJsonArray()</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>5.2. Concurrency & Thread-Safety (CopyOnWriteArrayList)</h3>
+<p>
+  In high-throughput environments, multiple client threads simultaneously append messages while HTTP handlers iterate over the collection to generate JSON responses. A standard <code>ArrayList</code> would trigger <code>ConcurrentModificationException</code>.
+</p>
+<p>
+  <code>MessageStore</code> resolves this through <code>java.util.concurrent.CopyOnWriteArrayList</code>:
+</p>
+<ul>
+  <li><strong>Lock-free Iteration:</strong> Iterating through messages for HTTP serialization operates on an immutable snapshot, ensuring maximum read throughput without synchronization locks.</li>
+  <li><strong>Atomic Writes:</strong> Append operations are thread-safe and isolated from active read operations.</li>
+</ul>
+
+<h3>5.3. Code Integration in ClientHandler.java</h3>
+<pre><code><span class="comment">// Inside ClientHandler.java execution loop</span>
+<span class="keyword">while</span> (running &amp;&amp; (line = in.readLine()) != <span class="keyword">null</span>) {
+    <span class="keyword">if</span> (line.startsWith(<span class="string">"MSG|"</span>)) {
+        <span class="type">String</span> chatContent = line.substring(4);
+
+        <span class="comment">// 1. Write to Shared MessageStore (Producer)</span>
+        <span class="type">Message</span> message = <span class="keyword">new</span> <span class="type">Message</span>(username, chatContent);
+        <span class="type">MessageStore</span>.getInstance().addMessage(message);
+
+        <span class="comment">// 2. Broadcast to all active TCP peer sockets</span>
+        server.broadcast(<span class="string">"MSG|"</span> + username + <span class="string">"|"</span> + chatContent);
+    }
+}</code></pre>
+
+<h2>6. Verification and Testing Runbook</h2>
+
+<div class="callout">
+  <div class="callout-title">Testing Procedure</div>
+  Follow this sequence to demonstrate full cross-protocol integration during viva or grading evaluation.
+</div>
+
+<ol>
+  <li>
+    <strong>Start Server Host:</strong>
+    <pre><code>java -cp out Main</code></pre>
+    Verify both console outputs:
+    <code>[Main] TCP Chat Server thread launched on port 5000</code> and 
+    <code>[Main] HTTP History REST Server started on port 8080</code>.
+  </li>
+  <li>
+    <strong>Publish Chat Messages over TCP:</strong>
+    Launch <code>ConsoleClient</code>, log in as <code>Alice</code>, and send:
+    <pre><code>/login Alice password123
+Hello everyone! This is Alice on TCP.</code></pre>
+  </li>
+  <li>
+    <strong>Query HTTP REST Endpoint (CLI):</strong>
+    Execute an HTTP GET request using <code>curl</code>:
+    <pre><code>curl -s http://localhost:8080/messages</code></pre>
+    Confirm the response contains Alice's message in JSON format.
+  </li>
+  <li>
+    <strong>Retrieve History in ConsoleClient:</strong>
+    Launch a second client as <code>Bob</code> and type:
+    <pre><code>/login Bob password123
+/history</code></pre>
+    Verify that Bob retrieves and displays Alice's TCP message via HTTP.
+  </li>
+</ol>
+
+</body>
+</html>
